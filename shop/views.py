@@ -3,8 +3,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from shop.filters import ProductFilter
-from shop.models import Category, Product
-from shop.serializers import CategorySerializer, ProductSerializer
+from shop.models import Category, Product, City
+from shop.serializers import CategorySerializer, ProductSerializer, CitySerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
 
@@ -26,3 +26,8 @@ class ProductDetail(RetrieveAPIView):
     def get_object(self):
         name = self.kwargs['name'].capitalize()
         return get_object_or_404(Product, title=name)
+
+
+class CityList(ListAPIView):
+    queryset = City.objects.all()
+    serializer_class = CitySerializer
