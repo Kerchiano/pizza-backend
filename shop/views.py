@@ -2,9 +2,9 @@ import django_filters
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
-from shop.filters import ProductFilter
-from shop.models import Category, Product, City
-from shop.serializers import CategorySerializer, ProductSerializer, CitySerializer
+from shop.filters import ProductFilter, RestaurantFilter
+from shop.models import Category, Product, City, Restaurant
+from shop.serializers import CategorySerializer, ProductSerializer, CitySerializer, RestaurantSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
 
@@ -31,3 +31,18 @@ class ProductDetail(RetrieveAPIView):
 class CityList(ListAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
+
+
+class RestaurantList(ListAPIView):
+    queryset = Restaurant.objects.all()
+    serializer_class = RestaurantSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = RestaurantFilter
+
+
+class RestaurantDetail(RetrieveAPIView):
+    serializer_class = RestaurantSerializer
+
+    def get_object(self):
+        slug = self.kwargs['slug']
+        return get_object_or_404(Restaurant, slug=slug)
