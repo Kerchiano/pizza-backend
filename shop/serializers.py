@@ -1,7 +1,10 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from shop.models import Category, Product, City, Restaurant
+from shop.models import Category, Product, City, Restaurant, Review, Rating
+
+User = get_user_model()
 
 
 class CategorySerializer(ModelSerializer):
@@ -34,5 +37,30 @@ class RestaurantSerializer(ModelSerializer):
 
     class Meta:
         model = Restaurant
-        fields = ['address', 'image', 'phone_number', 'open_time', 'close_time', 'description', 'city', 'category',
+        fields = ['id', 'address', 'image', 'phone_number', 'open_time', 'close_time', 'description', 'city',
+                  'category',
                   'service', 'slug']
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    rating = serializers.SlugRelatedField(queryset=Rating.objects.all(), slug_field='name')
+    user = serializers.EmailField(required=False)
+    restaurant = serializers.SlugRelatedField(queryset=Restaurant.objects.all(), slug_field='slug')
+    first_name = serializers.CharField(max_length=150, required=False)
+    phone_number = serializers.CharField(max_length=150, required=False)
+
+    class Meta:
+        model = Review
+        fields = ["rating", "review", "user", "restaurant", "first_name", "phone_number"]
+
+    def create(self, validated_data):
+        email = validated_data.get('user')
+        user_data = {
+            'email': validated_data.pop('user', None),
+            'first_name': validated_data.pop('first_name', None),
+            'phone_number': validated_data.pop('phone_number', None)
+        }
+        user, created = User.objects.get_or_create(email=email, defaults=user_data)
+        validated_data['user'] = user
+
+        return super().create(validated_data)

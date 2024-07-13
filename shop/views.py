@@ -1,10 +1,10 @@
-import django_filters
 from django.shortcuts import get_object_or_404
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView
 
 from shop.filters import ProductFilter, RestaurantFilter
-from shop.models import Category, Product, City, Restaurant
-from shop.serializers import CategorySerializer, ProductSerializer, CitySerializer, RestaurantSerializer
+from shop.models import Category, Product, City, Restaurant, Review
+from shop.serializers import CategorySerializer, ProductSerializer, CitySerializer, RestaurantSerializer, \
+    ReviewSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
 
@@ -46,3 +46,8 @@ class RestaurantDetail(RetrieveAPIView):
     def get_object(self):
         slug = self.kwargs['slug']
         return get_object_or_404(Restaurant, slug=slug)
+
+
+class ReviewCreate(ListCreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer

@@ -1,6 +1,7 @@
 from django.urls import path
 
-from shop.views import ProductDetail, ProductList, CategoryList, CityList, RestaurantList, RestaurantDetail
+from shop.views import ProductDetail, ProductList, CategoryList, CityList, RestaurantList, RestaurantDetail, \
+    ReviewCreate
 
 urlpatterns = [
     path('categories/', CategoryList.as_view(), name='category-list'),
@@ -9,4 +10,5 @@ urlpatterns = [
     path('cities/', CityList.as_view(), name='city-list'),
     path('restaurants/', RestaurantList.as_view(), name='restaurant-list'),
     path('restaurants/<slug:slug>/', RestaurantDetail.as_view(), name='restaurant-detail'),
+    path('reviews/', ReviewCreate.as_view(), name='review-create'),
 ]

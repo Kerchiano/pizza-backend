@@ -1,6 +1,4 @@
 from django.db import models
-from django.utils.text import slugify
-from unidecode import unidecode
 
 from pizza_backend import settings
 from shop.mixins import SlugMixin
@@ -80,3 +78,21 @@ class Restaurant(SlugMixin):
 
     def __str__(self):
         return self.address
+
+
+class Rating(models.Model):
+    name = models.CharField(max_length=100)
+    icon = models.URLField(max_length=500)
+
+    def __str__(self):
+        return self.name
+
+
+class Review(models.Model):
+    review = models.TextField()
+    rating = models.ForeignKey('Rating', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.user)
