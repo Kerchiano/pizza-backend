@@ -96,3 +96,24 @@ class Review(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+
+class Address(models.Model):
+    user = models.ForeignKey(User, related_name='addresses', on_delete=models.CASCADE)
+    GENDER_CHOICES = [
+        ('K', 'Київ'),
+        ('Kh', 'Харків'),
+        ('D', 'Дніпро'),
+        ('M', 'Миколаїв'),
+    ]
+    city = models.CharField(max_length=2, choices=GENDER_CHOICES, default='K')
+    street = models.CharField(max_length=255)
+    house_number = models.CharField(max_length=50)
+    floor = models.CharField(max_length=10, blank=True, null=True)
+    entrance = models.CharField(max_length=10, blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Addresses"
+
+    def __str__(self):
+        return f"{self.street}, {self.house_number}, {self.floor or ''}, {self.entrance or ''}"

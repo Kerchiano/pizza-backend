@@ -1,11 +1,16 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView, \
+    DestroyAPIView, CreateAPIView
+from rest_framework.permissions import IsAuthenticated
 
-from shop.filters import ProductFilter, RestaurantFilter
+from shop.filters import ProductFilter, RestaurantFilter, AddressFilter
 from shop.models import Category, Product, City, Restaurant, Review
+from shop.permissions import IsOwnerOrAdmin
 from shop.serializers import CategorySerializer, ProductSerializer, CitySerializer, RestaurantSerializer, \
-    ReviewSerializer
+    ReviewSerializer, AddressSerializer
 from django_filters.rest_framework import DjangoFilterBackend
+
+from shop.models import Address
 
 
 class CategoryList(ListAPIView):
@@ -51,3 +56,23 @@ class RestaurantDetail(RetrieveAPIView):
 class ReviewCreate(ListCreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
+
+class AddressList(ListAPIView):
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = AddressFilter
+
+
+class AddressDelete(DestroyAPIView):
+    permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
+
+    def get_object(self):
+        pk = self.kwargs['pk']
+        return get_object_or_404(Address, pk=pk)
+
+
+class AddressCreate(CreateAPIView):
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer

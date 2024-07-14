@@ -1,6 +1,6 @@
 import django_filters
 
-from shop.models import Product, Restaurant, City
+from shop.models import Product, Restaurant, City, Address
 
 
 class ProductFilter(django_filters.FilterSet):
@@ -40,3 +40,11 @@ class RestaurantFilter(django_filters.FilterSet):
     class Meta:
         model = Restaurant
         fields = ['city']
+
+
+class AddressFilter(django_filters.FilterSet):
+    user = django_filters.CharFilter(field_name='user__email', lookup_expr='icontains')
+
+    class Meta:
+        model = Address
+        fields = ['user']

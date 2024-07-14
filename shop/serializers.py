@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from shop.models import Category, Product, City, Restaurant, Review, Rating
+from shop.models import Address
 
 User = get_user_model()
 
@@ -64,3 +65,15 @@ class ReviewSerializer(serializers.ModelSerializer):
         validated_data['user'] = user
 
         return super().create(validated_data)
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(
+        slug_field='email',
+        queryset=User.objects.all()
+    )
+    city = serializers.CharField(source='get_city_display', read_only=True)
+
+    class Meta:
+        model = Address
+        fields = ['user', 'city', 'street', 'house_number', 'floor', 'entrance']
