@@ -3,11 +3,11 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIV
     DestroyAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from shop.filters import ProductFilter, RestaurantFilter, AddressFilter
-from shop.models import Category, Product, City, Restaurant, Review
+from shop.filters import ProductFilter, RestaurantFilter, AddressFilter, UserOrderFilter
+from shop.models import Category, Product, City, Restaurant, Review, Order
 from shop.permissions import IsOwnerOrAdmin
 from shop.serializers import CategorySerializer, ProductSerializer, CitySerializer, RestaurantSerializer, \
-    ReviewSerializer, AddressSerializer
+    ReviewSerializer, AddressSerializer, OrderSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
 from shop.models import Address
@@ -66,6 +66,7 @@ class AddressList(ListAPIView):
 
 
 class AddressDelete(DestroyAPIView):
+    queryset = Address.objects.all()
     permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
 
     def get_object(self):
@@ -76,3 +77,10 @@ class AddressDelete(DestroyAPIView):
 class AddressCreate(CreateAPIView):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
+
+
+class OrderListCreate(ListCreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = UserOrderFilter

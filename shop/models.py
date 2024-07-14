@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from pizza_backend import settings
 from shop.mixins import SlugMixin
@@ -27,7 +28,7 @@ class Product(SlugMixin):
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        return str(self.pk)
 
 
 class Topping(models.Model):
@@ -117,3 +118,35 @@ class Address(models.Model):
 
     def __str__(self):
         return f"{self.street}, {self.house_number}, {self.floor or ''}, {self.entrance or ''}"
+
+
+class Order(models.Model):
+    PAYMENT_METHOD_CHOICES = [
+        ('Г', 'Готівкою'),
+        ('К', 'Картою'),
+    ]
+
+    DELIVERY_TIME_CHOICES = [(f"{hour:02}:{minute:02}", f"{hour:02}:{minute:02}")
+                             for hour in range(12, 23)
+                             for minute in [0, 15, 30, 45]]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateField(auto_now_add=True)
+    delivery_address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE, blank=True, null=True)
+    payment_method = models.CharField(max_length=1, choices=PAYMENT_METHOD_CHOICES, default='Г')
+    delivery_date = models.DateField(default=timezone.now)
+    delivery_time = models.CharField(max_length=5, choices=DELIVERY_TIME_CHOICES, default='12:00')
+
+    def __str__(self):
+        return str(self.user)
+
+
+class OrderItem(models.Model):
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    order = models.ForeignKey('Order', related_name='order_items', on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+    def __str__(self):
+        return str(self.order)

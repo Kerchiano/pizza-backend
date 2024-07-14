@@ -1,7 +1,7 @@
 from django.urls import path
 
 from shop.views import ProductDetail, ProductList, CategoryList, CityList, RestaurantList, RestaurantDetail, \
-    ReviewCreate, AddressList, AddressDelete, AddressCreate
+    ReviewCreate, AddressList, AddressDelete, AddressCreate, OrderListCreate
 
 urlpatterns = [
     path('categories/', CategoryList.as_view(), name='category-list'),
@@ -14,4 +14,5 @@ urlpatterns = [
     path('address/', AddressList.as_view(), name='address-list'),
     path('address/create/', AddressCreate.as_view(), name='address-create'),
     path('address/delete/<int:pk>/', AddressDelete.as_view(), name='address-detail'),
+    path('orders/', OrderListCreate.as_view(), name='order-list-create'),
 ]
