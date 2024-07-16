@@ -57,24 +57,14 @@ class Service(models.Model):
         return self.title
 
 
-class Language(models.Model):
-    code = models.CharField(max_length=10, unique=True)
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
 class Restaurant(SlugMixin):
     address = models.CharField(max_length=255, unique=True)
     image = models.URLField(max_length=500)
-    phone_number = models.CharField(unique=True, max_length=10)
+    phone_number = models.CharField(unique=True, max_length=40)
     open_time = models.TimeField()
     close_time = models.TimeField()
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     city = models.ForeignKey(City, on_delete=models.CASCADE)
-    language = models.ForeignKey(Language, on_delete=models.CASCADE)
-    category = models.ManyToManyField(Category)
     service = models.ManyToManyField(Service)
 
     def __str__(self):

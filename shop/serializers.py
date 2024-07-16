@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from shop.models import Category, Product, City, Restaurant, Review, Rating, Order, OrderItem
+from shop.models import Category, Product, City, Restaurant, Review, Rating, Order, OrderItem, Service
 from shop.models import Address
 
 User = get_user_model()
@@ -14,9 +14,15 @@ class CategorySerializer(ModelSerializer):
         fields = '__all__'
 
 
+class DateOnlyField(serializers.Field):
+    def to_representation(self, value):
+        return value.date() if value else None
+
+
 class ProductSerializer(ModelSerializer):
     category = serializers.StringRelatedField()
     topping = serializers.StringRelatedField(many=True)
+    created_at = DateOnlyField()
 
     class Meta:
         model = Product
@@ -29,17 +35,21 @@ class CitySerializer(ModelSerializer):
         fields = '__all__'
 
 
+class ServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ['title', 'icon']
+
+
 class RestaurantSerializer(ModelSerializer):
     open_time = serializers.TimeField(format='%H:%M', input_formats=['%H:%M'])
     close_time = serializers.TimeField(format='%H:%M', input_formats=['%H:%M'])
     city = serializers.StringRelatedField()
-    category = serializers.StringRelatedField(many=True)
-    service = serializers.StringRelatedField(many=True)
+    service = ServiceSerializer(many=True)
 
     class Meta:
         model = Restaurant
         fields = ['id', 'address', 'image', 'phone_number', 'open_time', 'close_time', 'description', 'city',
-                  'category',
                   'service', 'slug']
 
 
