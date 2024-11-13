@@ -29,8 +29,8 @@ class ProductDetail(RetrieveAPIView):
     serializer_class = ProductSerializer
 
     def get_object(self):
-        name = self.kwargs['name'].capitalize()
-        return get_object_or_404(Product, title=name)
+        slug = self.kwargs['slug']
+        return get_object_or_404(Product, slug=slug)
 
 
 class CityList(ListAPIView):

@@ -7,9 +7,10 @@ from shop.mixins import SlugMixin
 User = settings.AUTH_USER_MODEL
 
 
-class Category(models.Model):
+class Category(SlugMixin):
     title = models.CharField(max_length=100)
     icon = models.URLField(max_length=500)
+    description = models.TextField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Categories"
@@ -24,11 +25,11 @@ class Product(SlugMixin):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.URLField(max_length=500)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
-    topping = models.ManyToManyField('Topping')
+    topping = models.ManyToManyField('Topping', related_name='products')
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.pk)
+        return str(self.title)
 
 
 class Topping(models.Model):
@@ -59,7 +60,8 @@ class Service(models.Model):
 
 class Restaurant(SlugMixin):
     address = models.CharField(max_length=255, unique=True)
-    image = models.URLField(max_length=500)
+    image_thumbnail = models.URLField(max_length=500)
+    image_detail = models.URLField(max_length=500, null=True, blank=True)
     phone_number = models.CharField(unique=True, max_length=40)
     open_time = models.TimeField()
     close_time = models.TimeField()
@@ -91,17 +93,18 @@ class Review(models.Model):
 
 class Address(models.Model):
     user = models.ForeignKey(User, related_name='addresses', on_delete=models.CASCADE)
-    GENDER_CHOICES = [
+    CITY_CHOICES = [
         ('K', 'Київ'),
         ('Kh', 'Харків'),
         ('D', 'Дніпро'),
         ('M', 'Миколаїв'),
     ]
-    city = models.CharField(max_length=2, choices=GENDER_CHOICES, default='K')
+    city = models.CharField(max_length=2, choices=CITY_CHOICES, default='K')
     street = models.CharField(max_length=255)
     house_number = models.CharField(max_length=50)
     floor = models.CharField(max_length=10, blank=True, null=True)
     entrance = models.CharField(max_length=10, blank=True, null=True)
+    flat = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Addresses"
@@ -112,8 +115,9 @@ class Address(models.Model):
 
 class Order(models.Model):
     PAYMENT_METHOD_CHOICES = [
-        ('Г', 'Готівкою'),
-        ('К', 'Картою'),
+        ('G', 'Готівкою'),
+        ('C', 'Картою'),
+        ('Q', 'QR-код')
     ]
 
     DELIVERY_TIME_CHOICES = [(f"{hour:02}:{minute:02}", f"{hour:02}:{minute:02}")
@@ -122,6 +126,10 @@ class Order(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    paid_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True,
+                                      default=0)
+    remaining_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, editable=False,
+                                           default=0)
     created_at = models.DateField(auto_now_add=True)
     delivery_address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
     restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE, blank=True, null=True)
@@ -129,14 +137,20 @@ class Order(models.Model):
     delivery_date = models.DateField(default=timezone.now)
     delivery_time = models.CharField(max_length=5, choices=DELIVERY_TIME_CHOICES, default='12:00')
 
+    def save(self, *args, **kwargs):
+        if self.total_amount is not None and self.paid_amount is not None:
+            self.remaining_amount = self.total_amount - self.paid_amount
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return str(self.user)
+        return str(self.id)
 
 
 class OrderItem(models.Model):
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, null=True, blank=True)
+    topping = models.ForeignKey('Topping', on_delete=models.CASCADE, null=True, blank=True)
     order = models.ForeignKey('Order', related_name='order_items', on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
     def __str__(self):
-        return str(self.order)
+        return str(self.order.id)

@@ -42,7 +42,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(max_length=100, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='M')
-    phone_number = models.CharField(max_length=15, blank=False, unique=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -51,5 +51,3 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return str(self.email)
-
-

@@ -5,6 +5,7 @@ from shop.models import Product, Restaurant, Address, Order
 
 class ProductFilter(django_filters.FilterSet):
     SORT_CHOICES = (
+        ('popular', 'Popular'),
         ('newest', 'Newest'),
         ('price_asc', 'Price Ascending'),
         ('price_desc', 'Price Descending'),
@@ -17,12 +18,16 @@ class ProductFilter(django_filters.FilterSet):
         label='Sort By'
     )
 
+    category = django_filters.CharFilter(field_name='category__slug', lookup_expr='exact')
+
     class Meta:
         model = Product
         fields = ['category', 'sort_by']
 
     def filter_sort_by(self, queryset, name, value):
-        if value == 'newest':
+        if value == 'popular':
+            return queryset
+        elif value == 'newest':
             return queryset.order_by('-created_at')
         elif value == 'price_asc':
             return queryset.order_by('price')
