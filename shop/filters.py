@@ -56,8 +56,8 @@ class AddressFilter(django_filters.FilterSet):
 
 
 class UserOrderFilter(django_filters.FilterSet):
-    user_email = django_filters.CharFilter(field_name='user__email', lookup_expr='icontains')
+    user_id = django_filters.NumberFilter(field_name='user__id')
 
     class Meta:
         model = Order
-        fields = ['user_email']
+        fields = ['user_id']

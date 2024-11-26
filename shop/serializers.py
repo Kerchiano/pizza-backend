@@ -68,25 +68,43 @@ class RestaurantSerializer(ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     rating = serializers.SlugRelatedField(queryset=Rating.objects.all(), slug_field='name')
-    user = serializers.EmailField(required=False)
-    restaurant = serializers.SlugRelatedField(queryset=Restaurant.objects.all(), slug_field='slug')
-    first_name = serializers.CharField(max_length=150, required=False)
-    phone_number = serializers.CharField(max_length=150, required=False)
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
+    email = serializers.EmailField(required=False)
+    restaurant = serializers.PrimaryKeyRelatedField(queryset=Restaurant.objects.all())
+    first_name = serializers.CharField(required=False)
+    phone_number = serializers.CharField(required=False)
 
     class Meta:
         model = Review
-        fields = ["rating", "review", "user", "restaurant", "first_name", "phone_number"]
+        fields = ["rating", "review", "user", "restaurant", 'email', "first_name", "phone_number"]
+
+    def validate(self, data):
+        errors = {}
+
+        if 'email' in data and User.objects.filter(email=data.get('email')).exists():
+            errors['email'] = 'Email already exists'
+
+        if 'phone_number' in data and User.objects.filter(phone_number=data.get('phone_number')).exists():
+            errors['phone_number'] = 'Phone number already exists'
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return data
 
     def create(self, validated_data):
-        email = validated_data.get('user')
-        user_data = {
-            'email': validated_data.pop('user', None),
-            'first_name': validated_data.pop('first_name', None),
-            'phone_number': validated_data.pop('phone_number', None)
-        }
-        user, created = User.objects.get_or_create(email=email, defaults=user_data)
-        validated_data['user'] = user
+        user = validated_data.get('user')
 
+        if not user:
+            user_data = {
+                'email': validated_data.pop('email', None),
+                'first_name': validated_data.pop('first_name', None),
+                'phone_number': validated_data.pop('phone_number', None),
+            }
+
+            user = User.objects.create(**user_data)
+
+        validated_data['user'] = user
         return super().create(validated_data)
 
 
@@ -96,16 +114,10 @@ class AddressSerializer(serializers.ModelSerializer):
         queryset=User.objects.all()
     )
 
-    # city = serializers.ChoiceField(choices=Address.CITY_CHOICES, required=True)
-
     class Meta:
         model = Address
         fields = ['user', 'id', 'city', 'street', 'house_number', 'floor', 'entrance', 'flat']
 
-    # def to_representation(self, instance):
-    #     representation = super().to_representation(instance)
-    #     representation['city'] = instance.get_city_display()
-    #     return representation
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(
@@ -120,9 +132,14 @@ class OrderItemSerializer(serializers.ModelSerializer):
     )
     quantity = serializers.IntegerField()
 
+    product_title = serializers.CharField(source='product.title', read_only=True)
+    topping_title = serializers.CharField(source='topping.title', read_only=True)
+    product_price = serializers.CharField(source='product.price', read_only=True)
+    topping_price = serializers.CharField(source='topping.price', read_only=True)
+
     class Meta:
         model = OrderItem
-        fields = ['product', 'topping', 'quantity']
+        fields = ['product', 'product_title', 'product_price', 'topping', 'topping_title', 'topping_price', 'quantity']
 
     def validate(self, data):
         if not data.get('product') and not data.get('topping'):
@@ -131,7 +148,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    order_items = OrderItemSerializer(many=True, write_only=True)
+    order_items = OrderItemSerializer(many=True)
 
     restaurant = serializers.PrimaryKeyRelatedField(
         queryset=Restaurant.objects.all(),
@@ -150,18 +167,16 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = [
-            'user', 'total_amount', 'paid_amount', 'remaining_amount', 'delivery_address', 'restaurant',
-            'payment_method', 'delivery_date', 'delivery_time', 'order_items'
-        ]
+        fields = ['id',
+                  'user', 'total_amount', 'paid_amount', 'remaining_amount', 'delivery_address', 'restaurant',
+                  'payment_method', 'delivery_date', 'delivery_time', 'order_items'
+                  ]
 
     def create(self, validated_data):
         order_items_data = validated_data.pop('order_items')
 
-        # Create the order using the existing user
         order = Order.objects.create(**validated_data)
 
-        # Create OrderItems for each entry in the order_items list
         for item_data in order_items_data:
             OrderItem.objects.create(order=order, **item_data)
 

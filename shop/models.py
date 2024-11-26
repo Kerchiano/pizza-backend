@@ -22,7 +22,7 @@ class Category(SlugMixin):
 class Product(SlugMixin):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.IntegerField()
     image = models.URLField(max_length=500)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     topping = models.ManyToManyField('Topping', related_name='products')
@@ -125,11 +125,9 @@ class Order(models.Model):
                              for minute in [0, 15, 30, 45]]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    paid_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True,
-                                      default=0)
-    remaining_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, editable=False,
-                                           default=0)
+    total_amount = models.IntegerField()
+    paid_amount = models.IntegerField(blank=True, null=True, default=0)
+    remaining_amount = models.IntegerField(blank=True, null=True, editable=False, default=0)
     created_at = models.DateField(auto_now_add=True)
     delivery_address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
     restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE, blank=True, null=True)
@@ -139,7 +137,7 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         if self.total_amount is not None and self.paid_amount is not None:
-            self.remaining_amount = self.total_amount - self.paid_amount
+            self.remaining_amount = self.paid_amount - self.total_amount
         super().save(*args, **kwargs)
 
     def __str__(self):
