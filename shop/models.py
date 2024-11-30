@@ -136,7 +136,7 @@ class Order(models.Model):
     delivery_time = models.CharField(max_length=5, choices=DELIVERY_TIME_CHOICES, default='12:00')
 
     def save(self, *args, **kwargs):
-        if self.total_amount is not None and self.paid_amount is not None:
+        if self.total_amount is not None and self.paid_amount is not None and self.paid_amount != 0:
             self.remaining_amount = self.paid_amount - self.total_amount
         super().save(*args, **kwargs)
 

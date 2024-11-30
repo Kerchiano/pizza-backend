@@ -109,9 +109,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class AddressSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(
-        slug_field='email',
-        queryset=User.objects.all()
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
     )
 
     class Meta:
