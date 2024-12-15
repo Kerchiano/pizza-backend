@@ -30,7 +30,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-y!t*nt$c_axv2#8pbv604w=wc8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'pizza-backend-t2lf.onrender.com',
+    'localhost',
+    '127.0.0.1'
+]
 
 # Application definition
 
