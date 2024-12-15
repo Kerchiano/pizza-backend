@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+
+import dj_database_url
 from dotenv import load_dotenv
 
 # dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -101,6 +103,13 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT'),
     }
 }
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default='postgresql://pizza_shop_fdgt_user:JFydInYBLvW8RV4mI78RMDoJcz7qBnFX@dpg-ctentg52ng1s738d51b0-a.oregon-postgres.render.com/pizza_shop_fdgt'
+#     )
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
