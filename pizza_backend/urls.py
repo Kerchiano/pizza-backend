@@ -37,31 +37,7 @@ schema_view = get_schema_view(
     permission_classes=([permissions.AllowAny]),
 )
 
-
-def api_root(request):
-    return JsonResponse({
-        "admin": "/admin/",
-        "auth_token": "/auth/jwt/create/",
-        "auth_users": "/auth/users/",
-        "auth_me": "/auth/users/me/",
-        "categories": "/categories/",
-        "products": "/products/",
-        "product_detail": "/products/<slug:slug>/",
-        "cities": "/cities/",
-        "restaurants": "/restaurants/",
-        "restaurant_detail": "/restaurants/<slug:slug>/",
-        "reviews": "/reviews/",
-        "address_list": "/address/",
-        "address_create": "/address/create/",
-        "address_delete": "/address/delete/<int:pk>/",
-        "orders": "/orders/",
-        "swagger": "/swagger/",
-        "redoc": "/redoc/",
-    })
-
-
 urlpatterns = [
-    path('', api_root, name='api-root'),
     path('admin/', admin.site.urls),
     path('', include(users_urls)),
     path('', include(categories_urls)),
