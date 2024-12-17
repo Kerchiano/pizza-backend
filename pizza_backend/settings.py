@@ -69,7 +69,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://pizza-frontend-g1dk1pq8t-kirils-projects-55835093.vercel.app",
+    "https://pizza-frontend-7m7nwggqb-kirils-projects-55835093.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
