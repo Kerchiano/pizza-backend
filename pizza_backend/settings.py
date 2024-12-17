@@ -98,22 +98,22 @@ WSGI_APPLICATION = 'pizza_backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-    }
-}
-
 # DATABASES = {
-#     'default': dj_database_url.config(
-#         default='postgresql://pizza_shop_fdgt_user:JFydInYBLvW8RV4mI78RMDoJcz7qBnFX@dpg-ctentg52ng1s738d51b0-a.oregon-postgres.render.com/pizza_shop_fdgt'
-#     )
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DB_NAME'),
+#         'USER': os.getenv('DB_USER'),
+#         'PASSWORD': os.getenv('DB_PASSWORD'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': os.getenv('DB_PORT'),
+#     }
 # }
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default='postgresql://pizza_shop_fdgt_user:JFydInYBLvW8RV4mI78RMDoJcz7qBnFX@dpg-ctentg52ng1s738d51b0-a.oregon-postgres.render.com/pizza_shop_fdgt'
+    )
+}
 
 
 # Password validation
