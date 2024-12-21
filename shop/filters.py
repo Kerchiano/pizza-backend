@@ -28,7 +28,7 @@ class ProductFilter(django_filters.FilterSet):
         if value == 'popular':
             return queryset
         elif value == 'newest':
-            return queryset.order_by('-created_at')
+            return queryset.order_by('-id')
         elif value == 'price_asc':
             return queryset.order_by('price')
         elif value == 'price_desc':

@@ -69,40 +69,14 @@ class RestaurantSerializer(ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     rating = serializers.SlugRelatedField(queryset=Rating.objects.all(), slug_field='name')
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
-    email = serializers.EmailField(required=False)
     restaurant = serializers.PrimaryKeyRelatedField(queryset=Restaurant.objects.all())
-    first_name = serializers.CharField(required=False)
-    phone_number = serializers.CharField(required=False)
 
     class Meta:
         model = Review
-        fields = ["rating", "review", "user", "restaurant", 'email', "first_name", "phone_number"]
-
-    def validate(self, data):
-        errors = {}
-
-        if 'email' in data and User.objects.filter(email=data.get('email')).exists():
-            errors['email'] = 'Email already exists'
-
-        if 'phone_number' in data and User.objects.filter(phone_number=data.get('phone_number')).exists():
-            errors['phone_number'] = 'Phone number already exists'
-
-        if errors:
-            raise serializers.ValidationError(errors)
-
-        return data
+        fields = ["rating", "review", "user", "restaurant"]
 
     def create(self, validated_data):
         user = validated_data.get('user')
-
-        if not user:
-            user_data = {
-                'email': validated_data.pop('email', None),
-                'first_name': validated_data.pop('first_name', None),
-                'phone_number': validated_data.pop('phone_number', None),
-            }
-
-            user = User.objects.create(**user_data)
 
         validated_data['user'] = user
         return super().create(validated_data)
