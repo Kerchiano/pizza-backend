@@ -70,6 +70,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://pizza-frontend-chi.vercel.app",
+    "https://uptimerobot.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
