@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListAPIView, RetrieveAPIView, ListCreateAPIView, \
     DestroyAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from shop.filters import ProductFilter, RestaurantFilter, AddressFilter, UserOrderFilter
 from shop.models import Category, Product, City, Restaurant, Review, Order
@@ -63,6 +64,12 @@ class AddressList(ListAPIView):
     serializer_class = AddressSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = AddressFilter
+
+    def list(self, request, *args, **kwargs):
+        if 'user' not in request.query_params:
+            return Response({"detail": "The 'user' parameter is required."}, status=400)
+
+        return super().list(request, *args, **kwargs)
 
 
 class AddressDelete(DestroyAPIView):

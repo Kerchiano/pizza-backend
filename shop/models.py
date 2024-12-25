@@ -106,11 +106,13 @@ class Address(models.Model):
     entrance = models.CharField(max_length=10, blank=True, null=True)
     flat = models.CharField(max_length=50, blank=True, null=True)
 
-    class Meta:
-        verbose_name_plural = "Addresses"
 
-    def __str__(self):
-        return f"{self.street}, {self.house_number}, {self.floor or ''}, {self.entrance or ''}"
+class Meta:
+    verbose_name_plural = "Addresses"
+
+
+def __str__(self):
+    return f"{self.street}, {self.house_number}, {self.floor or ''}, {self.entrance or ''}"
 
 
 class Order(models.Model):

@@ -40,15 +40,15 @@ class ProductFilter(django_filters.FilterSet):
 
 
 class RestaurantFilter(django_filters.FilterSet):
-    city = django_filters.CharFilter(field_name='city__slug')
+    city_slug = django_filters.CharFilter(field_name='city__slug')
 
     class Meta:
         model = Restaurant
-        fields = ['city']
+        fields = ['city_slug']
 
 
 class AddressFilter(django_filters.FilterSet):
-    user = django_filters.CharFilter(field_name='user__id')
+    user = django_filters.NumberFilter(field_name='user_id')
 
     class Meta:
         model = Address
