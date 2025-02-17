@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'djoser',
     'django_filters',
     'corsheaders',
-    'silk',
 ]
 
 MIDDLEWARE = [
