@@ -1,6 +1,5 @@
 import os
 import django
-from django.conf import settings
 from django.db import connection
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pizza_backend.settings')
