@@ -65,7 +65,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'silk.middleware.SilkyMiddleware',
 ]
 
 CORS_ALLOWED_ORIGINS = [
