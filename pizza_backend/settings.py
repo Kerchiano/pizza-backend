@@ -111,7 +111,7 @@ WSGI_APPLICATION = 'pizza_backend.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://postgres.sxprwaxkeuzgkuscufjj:sdhUZ3T8k5jn7bsM@aws-0-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require'
+        default='postgres://postgres.sxprwaxkeuzgkuscufjj:sdhUZ3T8k5jn7bsM@aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require'
     )
 }
 
